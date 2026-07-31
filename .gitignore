@@ -37,6 +37,8 @@ yarn-error.log
 /coverage
 /backend/.venv
 /backend/instance
+__pycache__/
+*.py[cod]
 *.db
 /libpeerconnection.log
 testem.log
