@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 # MMU STEM Mentorship and Collaboration Portal
 
 An Angular web portal for Multimedia University students, mentors, and administrators to explore STEM mentors, collaborate on projects, manage requests, and use the built-in STEM Bot.
@@ -95,28 +94,11 @@ npm start -- --host 0.0.0.0
 ```
 
 ## Production build
-=======
-# BroGrammers Vercel Demo
-
-This is a standalone Angular demo copy of the MMU STEM Portal UI.
-
-Login is disabled for portfolio viewing. The demo loads a student, mentor, and admin session automatically, with sample mentors, projects, requests, and admin approval data stored in the browser runtime.
-
-## Run locally
-
-```powershell
-npm install
-npm start
-```
-
-## Build
->>>>>>> 78eb154bd8c4728a50739bcb65e474a31627bd34
 
 ```powershell
 npm run build
 ```
 
-<<<<<<< HEAD
 The browser bundle is written to `dist/frontend/browser/`.
 
 To preview that production output locally, use any static server that falls back unknown routes to `index.html`.
@@ -186,8 +168,3 @@ For Vercel, import this directory as the project root. `vercel.json` runs the pr
 - Authentication is intentionally disabled in the demo behavior already present in the repository.
 - No server API, database, or backend tests can be documented or verified because those files are not included.
 - The checked-in application began as a single large preserved UI shell; further feature-component extraction should be paired with visual regression tooling to avoid changing the legacy stylesheet’s selector behavior.
-=======
-## Deploy to Vercel
-
-Import this folder as a new Vercel project. Vercel uses `vercel.json` to build Angular and serve the SPA routes correctly.
->>>>>>> 78eb154bd8c4728a50739bcb65e474a31627bd34

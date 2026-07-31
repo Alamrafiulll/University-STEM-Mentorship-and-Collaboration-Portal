@@ -1,14 +1,8 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectorRef, Component, OnDestroy, OnInit, computed, inject, signal } from '@angular/core';
-<<<<<<< HEAD
 import { NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { NavigationEnd, Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { DemoBackend } from './core/api/demo-backend.service';
-=======
-import { FormsModule } from '@angular/forms';
-import { NavigationEnd, Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
-import { DemoBackend } from './demo-backend';
->>>>>>> 78eb154bd8c4728a50739bcb65e474a31627bd34
 
 type Status = 'idle' | 'loading' | 'ready' | 'error';
 
@@ -102,25 +96,15 @@ interface AdminData {
 
 @Component({
   selector: 'app-root',
-<<<<<<< HEAD
   imports: [CommonModule, ReactiveFormsModule, RouterLink, RouterLinkActive, RouterOutlet],
-=======
-  imports: [CommonModule, FormsModule, RouterLink, RouterLinkActive, RouterOutlet],
->>>>>>> 78eb154bd8c4728a50739bcb65e474a31627bd34
   templateUrl: './app.html',
   styleUrl: './app.css'
 })
 export class App implements OnInit, OnDestroy {
-<<<<<<< HEAD
   private readonly demo = inject(DemoBackend);
   private readonly router = inject(Router);
   private readonly cdr = inject(ChangeDetectorRef);
   private readonly fb = inject(NonNullableFormBuilder);
-=======
-  private readonly demo = new DemoBackend();
-  private readonly router = inject(Router);
-  private readonly cdr = inject(ChangeDetectorRef);
->>>>>>> 78eb154bd8c4728a50739bcb65e474a31627bd34
 
   mentors = signal<Mentor[]>([]);
   projects = signal<Project[]>([]);
@@ -140,7 +124,6 @@ export class App implements OnInit, OnDestroy {
   adminData = signal<AdminData | null>(null);
   authModal: AuthModal = null;
 
-<<<<<<< HEAD
   readonly studentForm = this.fb.group({
     student_name: ['Rafi Demo Student', Validators.required],
     email: ['demo.student@mmu.edu.my', [Validators.required, Validators.email]],
@@ -186,25 +169,6 @@ export class App implements OnInit, OnDestroy {
   readonly adminLoginForm = this.fb.group({
     password: ['demo-admin', Validators.required]
   });
-=======
-  studentLogin = { student_name: 'Rafi Demo Student', email: 'demo.student@mmu.edu.my', password: 'demo' };
-  mentorRequest = { mentor_id: '', interest: '', message: '' };
-  projectRequest = { project_id: '', mentor_id: '', project_title: '', role: '', faculty: '', skills: '', availability: '', intro: '', message: '' };
-  mentorLogin = { email: 'aisha.rahman@mmu.edu.my', access_code: 'demo-mentor' };
-  mentorRegistration = {
-    name: '',
-    field: '',
-    description: '',
-    research_area: '',
-    email: '',
-    access_code: '',
-    workshop_title: '',
-    workshop_description: ''
-  };
-  newProject = { title: '', category: '', description: '', team_size: 4 };
-  chatInput = '';
-  adminPassword = 'demo-admin';
->>>>>>> 78eb154bd8c4728a50739bcb65e474a31627bd34
   portalTab: 'mentors' | 'projects' | 'workspace' = 'mentors';
   adminTab: 'students' | 'pending' | 'approved' | 'rejected' = 'pending';
   mentorAuthMode: 'login' | 'register' = 'login';
@@ -348,24 +312,16 @@ export class App implements OnInit, OnDestroy {
   }
 
   loginStudent(): void {
-<<<<<<< HEAD
     if (this.studentForm.invalid) return;
     this.demo.loginStudent(this.studentForm.getRawValue());
-=======
-    this.demo.loginStudent(this.studentLogin);
->>>>>>> 78eb154bd8c4728a50739bcb65e474a31627bd34
     this.closeAuthModal();
     this.portalTab = 'workspace';
     this.syncDemoSession('Demo student workspace is ready.');
   }
 
   registerStudent(): void {
-<<<<<<< HEAD
     if (this.studentForm.invalid) return;
     this.demo.registerStudent(this.studentForm.getRawValue());
-=======
-    this.demo.registerStudent(this.studentLogin);
->>>>>>> 78eb154bd8c4728a50739bcb65e474a31627bd34
     this.closeAuthModal();
     this.portalTab = 'workspace';
     this.syncDemoSession('Demo student account is active.');
@@ -377,20 +333,14 @@ export class App implements OnInit, OnDestroy {
   }
 
   sendMentorRequest(): void {
-<<<<<<< HEAD
     if (this.mentorRequestForm.invalid) return;
     const message = this.demo.sendMentorRequest(this.mentorRequestForm.getRawValue());
     this.mentorRequestForm.reset({ mentor_id: '', interest: '', message: '' });
-=======
-    const message = this.demo.sendMentorRequest(this.mentorRequest);
-    this.mentorRequest = { mentor_id: '', interest: '', message: '' };
->>>>>>> 78eb154bd8c4728a50739bcb65e474a31627bd34
     this.portalTab = 'workspace';
     this.syncDemoSession(message);
   }
 
   sendProjectRequest(): void {
-<<<<<<< HEAD
     if (this.projectRequestForm.invalid) return;
     const request = this.projectRequestForm.getRawValue();
     const selectedProject = this.projects().find((project) => String(project.id) === String(request.project_id));
@@ -399,14 +349,6 @@ export class App implements OnInit, OnDestroy {
       project_title: request.project_title || selectedProject?.title || ''
     });
     this.projectRequestForm.reset({ project_id: '', mentor_id: '', project_title: '', role: '', faculty: '', skills: '', availability: '', intro: '', message: '' });
-=======
-    const selectedProject = this.projects().find((project) => String(project.id) === String(this.projectRequest.project_id));
-    const message = this.demo.sendProjectRequest({
-      ...this.projectRequest,
-      project_title: this.projectRequest.project_title || selectedProject?.title || ''
-    });
-    this.projectRequest = { project_id: '', mentor_id: '', project_title: '', role: '', faculty: '', skills: '', availability: '', intro: '', message: '' };
->>>>>>> 78eb154bd8c4728a50739bcb65e474a31627bd34
     this.portalTab = 'workspace';
     this.syncDemoSession(message);
   }
@@ -416,14 +358,9 @@ export class App implements OnInit, OnDestroy {
   }
 
   registerMentor(): void {
-<<<<<<< HEAD
     if (this.mentorRegistrationForm.invalid) return;
     const message = this.demo.registerMentor(this.mentorRegistrationForm.getRawValue());
     this.mentorRegistrationForm.reset({ name: '', field: '', description: '', research_area: '', email: '', access_code: '', workshop_title: '', workshop_description: '' });
-=======
-    const message = this.demo.registerMentor(this.mentorRegistration);
-    this.mentorRegistration = { name: '', field: '', description: '', research_area: '', email: '', access_code: '', workshop_title: '', workshop_description: '' };
->>>>>>> 78eb154bd8c4728a50739bcb65e474a31627bd34
     this.closeAuthModal();
     this.mentorAuthMode = 'login';
     this.adminTab = 'pending';
@@ -431,10 +368,7 @@ export class App implements OnInit, OnDestroy {
   }
 
   loginMentor(): void {
-<<<<<<< HEAD
     if (this.mentorLoginForm.invalid) return;
-=======
->>>>>>> 78eb154bd8c4728a50739bcb65e474a31627bd34
     this.demo.loginMentor();
     this.closeAuthModal();
     this.syncDemoSession('Demo mentor workspace is ready.');
@@ -450,32 +384,19 @@ export class App implements OnInit, OnDestroy {
   }
 
   createMentorProject(): void {
-<<<<<<< HEAD
     if (this.newProjectForm.invalid) return;
     const message = this.demo.createMentorProject(this.newProjectForm.getRawValue());
     this.newProjectForm.reset({ title: '', category: '', description: '', team_size: 4 });
-=======
-    const message = this.demo.createMentorProject(this.newProject);
-    this.newProject = { title: '', category: '', description: '', team_size: 4 };
->>>>>>> 78eb154bd8c4728a50739bcb65e474a31627bd34
     this.syncDemoSession(message);
   }
 
   askChatbot(): void {
-<<<<<<< HEAD
     const question = this.chatForm.controls.message.value.trim();
-=======
-    const question = this.chatInput.trim();
->>>>>>> 78eb154bd8c4728a50739bcb65e474a31627bd34
     if (!question) {
       return;
     }
     this.chatMessages.update((messages) => [...messages, { from: 'student', text: question }]);
-<<<<<<< HEAD
     this.chatForm.controls.message.setValue('');
-=======
-    this.chatInput = '';
->>>>>>> 78eb154bd8c4728a50739bcb65e474a31627bd34
     this.chatBusy.set(true);
     window.setTimeout(() => {
       this.chatMessages.update((messages) => [...messages, { from: 'assistant', text: this.demo.chatReply(question) }]);
@@ -494,46 +415,28 @@ export class App implements OnInit, OnDestroy {
   }
 
   quickMentorRequest(mentor: Mentor): void {
-<<<<<<< HEAD
     this.mentorRequestForm.setValue({
       mentor_id: String(mentor.id),
       interest: mentor.field || '',
       message: `I'd like to connect with ${mentor.name} for mentorship.`
     });
-=======
-    this.mentorRequest.mentor_id = String(mentor.id);
-    this.mentorRequest.interest = mentor.field || '';
-    this.mentorRequest.message = `I'd like to connect with ${mentor.name} for mentorship.`;
->>>>>>> 78eb154bd8c4728a50739bcb65e474a31627bd34
     this.sendMentorRequest();
   }
 
   quickProjectRequest(project: Project): void {
-<<<<<<< HEAD
     this.projectRequestForm.patchValue({
       project_id: String(project.id),
       project_title: project.title,
       mentor_id: String(project.mentor_id || ''),
       intro: `Requesting to join ${project.title}.`
     });
-=======
-    this.projectRequest.project_id = String(project.id);
-    this.projectRequest.project_title = project.title;
-    this.projectRequest.mentor_id = String(project.mentor_id || '');
-    this.projectRequest.intro = `Requesting to join ${project.title}.`;
->>>>>>> 78eb154bd8c4728a50739bcb65e474a31627bd34
     this.sendProjectRequest();
   }
 
   loginAdmin(): void {
-<<<<<<< HEAD
     if (this.adminLoginForm.invalid) return;
     this.adminLoggedIn.set(true);
     this.adminLoginForm.controls.password.setValue('');
-=======
-    this.adminLoggedIn.set(true);
-    this.adminPassword = '';
->>>>>>> 78eb154bd8c4728a50739bcb65e474a31627bd34
     this.closeAuthModal();
     this.syncDemoSession('Demo admin dashboard is ready.');
   }
