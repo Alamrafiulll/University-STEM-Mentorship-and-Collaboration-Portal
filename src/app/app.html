@@ -300,14 +300,22 @@
 
           <!-- Quick Actions -->
           <div class="workspace-grid">
+<<<<<<< HEAD
             <form class="form-panel" [formGroup]="mentorRequestForm" (ngSubmit)="sendMentorRequest()">
               <h3>Request a Mentor</h3>
               <label>Mentor
                 <select name="mentorRequestMentor" formControlName="mentor_id" required>
+=======
+            <form class="form-panel" (ngSubmit)="sendMentorRequest()">
+              <h3>Request a Mentor</h3>
+              <label>Mentor
+                <select name="mentorRequestMentor" [(ngModel)]="mentorRequest.mentor_id" required>
+>>>>>>> 78eb154bd8c4728a50739bcb65e474a31627bd34
                   <option value="">Select mentor</option>
                   <option *ngFor="let mentor of mentors()" [value]="mentor.id">{{ mentor.name }} / {{ mentor.field }}</option>
                 </select>
               </label>
+<<<<<<< HEAD
               <label>Interest <input name="mentorInterest" formControlName="interest" required placeholder="AI, IoT, robotics..."></label>
               <label>Message <textarea name="mentorMessage" formControlName="message" rows="2" placeholder="Brief intro..."></textarea></label>
               <button class="button primary" type="submit">Send request</button>
@@ -318,20 +326,44 @@
               <p class="hint" *ngIf="acceptedMentorCount() === 0">You need an accepted mentor first.</p>
               <label>Existing project
                 <select name="projectRequestProject" formControlName="project_id">
+=======
+              <label>Interest <input name="mentorInterest" [(ngModel)]="mentorRequest.interest" required placeholder="AI, IoT, robotics..."></label>
+              <label>Message <textarea name="mentorMessage" [(ngModel)]="mentorRequest.message" rows="2" placeholder="Brief intro..."></textarea></label>
+              <button class="button primary" type="submit">Send request</button>
+            </form>
+
+            <form class="form-panel" (ngSubmit)="sendProjectRequest()">
+              <h3>Join or Propose a Project</h3>
+              <p class="hint" *ngIf="acceptedMentorCount() === 0">You need an accepted mentor first.</p>
+              <label>Existing project
+                <select name="projectRequestProject" [(ngModel)]="projectRequest.project_id">
+>>>>>>> 78eb154bd8c4728a50739bcb65e474a31627bd34
                   <option value="">Propose a new idea</option>
                   <option *ngFor="let project of projects()" [value]="project.id" [disabled]="project.is_full">{{ project.title }}</option>
                 </select>
               </label>
+<<<<<<< HEAD
               <label>Project title <input name="projectTitle" formControlName="project_title" placeholder="Required for new ideas"></label>
               <label>Approving mentor
                 <select name="projectMentor" formControlName="mentor_id" required>
+=======
+              <label>Project title <input name="projectTitle" [(ngModel)]="projectRequest.project_title" placeholder="Required for new ideas"></label>
+              <label>Approving mentor
+                <select name="projectMentor" [(ngModel)]="projectRequest.mentor_id" required>
+>>>>>>> 78eb154bd8c4728a50739bcb65e474a31627bd34
                   <option value="">Select mentor</option>
                   <option *ngFor="let mentor of mentors()" [value]="mentor.id">{{ mentor.name }}</option>
                 </select>
               </label>
+<<<<<<< HEAD
               <label>Role <input name="projectRole" formControlName="role" placeholder="Frontend, AI, hardware"></label>
               <label>Skills <input name="projectSkills" formControlName="skills" placeholder="Python, Angular, sensors"></label>
               <label>Short plan <textarea name="projectIntro" formControlName="intro" rows="2"></textarea></label>
+=======
+              <label>Role <input name="projectRole" [(ngModel)]="projectRequest.role" placeholder="Frontend, AI, hardware"></label>
+              <label>Skills <input name="projectSkills" [(ngModel)]="projectRequest.skills" placeholder="Python, Angular, sensors"></label>
+              <label>Short plan <textarea name="projectIntro" [(ngModel)]="projectRequest.intro" rows="2"></textarea></label>
+>>>>>>> 78eb154bd8c4728a50739bcb65e474a31627bd34
               <button class="button primary" type="submit" [disabled]="acceptedMentorCount() === 0">Submit</button>
             </form>
           </div>
@@ -371,6 +403,7 @@
           </div>
         </div>
 
+<<<<<<< HEAD
         <form class="mentor-auth-form" *ngIf="mentorAuthMode === 'login'" [formGroup]="mentorLoginForm" (ngSubmit)="loginMentor()">
           <div class="auth-form-grid mentor-login-grid">
             <label>Email
@@ -378,6 +411,15 @@
             </label>
             <label>Access code
               <input name="mentorCode" formControlName="access_code" type="password" required autocomplete="current-password" placeholder="Access code">
+=======
+        <form class="mentor-auth-form" *ngIf="mentorAuthMode === 'login'" (ngSubmit)="loginMentor()">
+          <div class="auth-form-grid mentor-login-grid">
+            <label>Email
+              <input name="mentorEmail" [(ngModel)]="mentorLogin.email" type="email" required autocomplete="email" placeholder="mentor@example.com">
+            </label>
+            <label>Access code
+              <input name="mentorCode" [(ngModel)]="mentorLogin.access_code" type="password" required autocomplete="current-password" placeholder="Access code">
+>>>>>>> 78eb154bd8c4728a50739bcb65e474a31627bd34
             </label>
           </div>
           <div class="mentor-form-actions">
@@ -386,6 +428,7 @@
           </div>
         </form>
 
+<<<<<<< HEAD
         <form class="mentor-auth-form" *ngIf="mentorAuthMode === 'register'" [formGroup]="mentorRegistrationForm" (ngSubmit)="registerMentor()">
           <div class="auth-form-grid">
             <label>Name
@@ -393,10 +436,20 @@
             </label>
             <label>Email
               <input name="regEmail" formControlName="email" type="email" required autocomplete="email" placeholder="mentor@example.com">
+=======
+        <form class="mentor-auth-form" *ngIf="mentorAuthMode === 'register'" (ngSubmit)="registerMentor()">
+          <div class="auth-form-grid">
+            <label>Name
+              <input name="regName" [(ngModel)]="mentorRegistration.name" required autocomplete="name" placeholder="Dr. Aisha Rahman">
+            </label>
+            <label>Email
+              <input name="regEmail" [(ngModel)]="mentorRegistration.email" type="email" required autocomplete="email" placeholder="mentor@example.com">
+>>>>>>> 78eb154bd8c4728a50739bcb65e474a31627bd34
             </label>
           </div>
           <div class="auth-form-grid">
             <label>Field
+<<<<<<< HEAD
               <input name="regField" formControlName="field" required placeholder="AI, Robotics, IoT">
             </label>
             <label>Access code
@@ -408,6 +461,19 @@
           </label>
           <label>Description
             <textarea name="regDescription" formControlName="description" rows="4" required placeholder="Briefly describe your expertise and mentorship focus."></textarea>
+=======
+              <input name="regField" [(ngModel)]="mentorRegistration.field" required placeholder="AI, Robotics, IoT">
+            </label>
+            <label>Access code
+              <input name="regCode" [(ngModel)]="mentorRegistration.access_code" required autocomplete="new-password" placeholder="Create access code">
+            </label>
+          </div>
+          <label>Research area
+            <input name="regResearch" [(ngModel)]="mentorRegistration.research_area" placeholder="Machine learning, smart systems">
+          </label>
+          <label>Description
+            <textarea name="regDescription" [(ngModel)]="mentorRegistration.description" rows="4" required placeholder="Briefly describe your expertise and mentorship focus."></textarea>
+>>>>>>> 78eb154bd8c4728a50739bcb65e474a31627bd34
           </label>
           <div class="mentor-form-actions">
             <button class="button primary" type="submit">Submit for Approval</button>
@@ -417,12 +483,21 @@
       </div>
 
       <div class="workspace-grid" *ngIf="mentorSession()">
+<<<<<<< HEAD
         <form class="form-panel" [formGroup]="newProjectForm" (ngSubmit)="createMentorProject()">
           <h3>Create project</h3>
           <label>Title <input name="newProjectTitle" formControlName="title" required></label>
           <label>Category <input name="newProjectCategory" formControlName="category"></label>
           <label>Team size <input name="newProjectSize" formControlName="team_size" type="number" min="1" max="5"></label>
           <label>Description <textarea name="newProjectDescription" formControlName="description" rows="3"></textarea></label>
+=======
+        <form class="form-panel" (ngSubmit)="createMentorProject()">
+          <h3>Create project</h3>
+          <label>Title <input name="newProjectTitle" [(ngModel)]="newProject.title" required></label>
+          <label>Category <input name="newProjectCategory" [(ngModel)]="newProject.category"></label>
+          <label>Team size <input name="newProjectSize" [(ngModel)]="newProject.team_size" type="number" min="1" max="5"></label>
+          <label>Description <textarea name="newProjectDescription" [(ngModel)]="newProject.description" rows="3"></textarea></label>
+>>>>>>> 78eb154bd8c4728a50739bcb65e474a31627bd34
           <button class="button primary" type="submit">Create project</button>
         </form>
 
@@ -607,6 +682,7 @@
     <section class="auth-modal" role="dialog" aria-modal="true" (click)="$event.stopPropagation()">
       <button class="auth-modal-close" type="button" aria-label="Close" (click)="closeAuthModal()">×</button>
 
+<<<<<<< HEAD
       <form class="auth-modal-form" *ngIf="authModal === 'student-login'" [formGroup]="studentForm" (ngSubmit)="loginStudent()">
         <p class="eyebrow">Student Login</p>
         <h2>Welcome back</h2>
@@ -615,11 +691,22 @@
         </label>
         <label>Password
           <input name="studentLoginPassword" formControlName="password" type="password" required autocomplete="current-password" placeholder="Password">
+=======
+      <form class="auth-modal-form" *ngIf="authModal === 'student-login'" (ngSubmit)="loginStudent()">
+        <p class="eyebrow">Student Login</p>
+        <h2>Welcome back</h2>
+        <label>Email
+          <input name="studentLoginEmail" [(ngModel)]="studentLogin.email" type="email" required autocomplete="email" placeholder="student@example.com">
+        </label>
+        <label>Password
+          <input name="studentLoginPassword" [(ngModel)]="studentLogin.password" type="password" required autocomplete="current-password" placeholder="Password">
+>>>>>>> 78eb154bd8c4728a50739bcb65e474a31627bd34
         </label>
         <button class="button primary" type="submit">Open Workspace</button>
         <p class="auth-switch">New student? <button type="button" (click)="openAuthModal('student-register')">Create an account</button></p>
       </form>
 
+<<<<<<< HEAD
       <form class="auth-modal-form" *ngIf="authModal === 'student-register'" [formGroup]="studentForm" (ngSubmit)="registerStudent()">
         <p class="eyebrow">Student Registration</p>
         <h2>Create your account</h2>
@@ -631,11 +718,25 @@
         </label>
         <label>Password
           <input name="studentRegisterPassword" formControlName="password" type="password" required autocomplete="new-password" placeholder="Create a password">
+=======
+      <form class="auth-modal-form" *ngIf="authModal === 'student-register'" (ngSubmit)="registerStudent()">
+        <p class="eyebrow">Student Registration</p>
+        <h2>Create your account</h2>
+        <label>Name
+          <input name="studentRegisterName" [(ngModel)]="studentLogin.student_name" required autocomplete="name" placeholder="Aisha Rahman">
+        </label>
+        <label>Email
+          <input name="studentRegisterEmail" [(ngModel)]="studentLogin.email" type="email" required autocomplete="email" placeholder="student@example.com">
+        </label>
+        <label>Password
+          <input name="studentRegisterPassword" [(ngModel)]="studentLogin.password" type="password" required autocomplete="new-password" placeholder="Create a password">
+>>>>>>> 78eb154bd8c4728a50739bcb65e474a31627bd34
         </label>
         <button class="button primary" type="submit">Create Student Account</button>
         <p class="auth-switch">Already registered? <button type="button" (click)="openAuthModal('student-login')">Sign in</button></p>
       </form>
 
+<<<<<<< HEAD
       <form class="auth-modal-form" *ngIf="authModal === 'mentor-login'" [formGroup]="mentorLoginForm" (ngSubmit)="loginMentor()">
         <p class="eyebrow">Mentor Login</p>
         <h2>Open mentor workspace</h2>
@@ -644,24 +745,46 @@
         </label>
         <label>Access code
           <input name="mentorLoginCode" formControlName="access_code" type="password" required autocomplete="current-password" placeholder="Access code">
+=======
+      <form class="auth-modal-form" *ngIf="authModal === 'mentor-login'" (ngSubmit)="loginMentor()">
+        <p class="eyebrow">Mentor Login</p>
+        <h2>Open mentor workspace</h2>
+        <label>Email
+          <input name="mentorLoginEmail" [(ngModel)]="mentorLogin.email" type="email" required autocomplete="email" placeholder="mentor@example.com">
+        </label>
+        <label>Access code
+          <input name="mentorLoginCode" [(ngModel)]="mentorLogin.access_code" type="password" required autocomplete="current-password" placeholder="Access code">
+>>>>>>> 78eb154bd8c4728a50739bcb65e474a31627bd34
         </label>
         <button class="button primary" type="submit">Open Mentor Workspace</button>
         <p class="auth-switch">New mentor? <button type="button" (click)="openAuthModal('mentor-register')">Register profile</button></p>
       </form>
 
+<<<<<<< HEAD
       <form class="auth-modal-form" *ngIf="authModal === 'mentor-register'" [formGroup]="mentorRegistrationForm" (ngSubmit)="registerMentor()">
+=======
+      <form class="auth-modal-form" *ngIf="authModal === 'mentor-register'" (ngSubmit)="registerMentor()">
+>>>>>>> 78eb154bd8c4728a50739bcb65e474a31627bd34
         <p class="eyebrow">Mentor Registration</p>
         <h2>Submit mentor profile</h2>
         <div class="auth-form-grid">
           <label>Name
+<<<<<<< HEAD
             <input name="mentorRegisterName" formControlName="name" required autocomplete="name" placeholder="Dr. Aisha Rahman">
           </label>
           <label>Email
             <input name="mentorRegisterEmail" formControlName="email" type="email" required autocomplete="email" placeholder="mentor@example.com">
+=======
+            <input name="mentorRegisterName" [(ngModel)]="mentorRegistration.name" required autocomplete="name" placeholder="Dr. Aisha Rahman">
+          </label>
+          <label>Email
+            <input name="mentorRegisterEmail" [(ngModel)]="mentorRegistration.email" type="email" required autocomplete="email" placeholder="mentor@example.com">
+>>>>>>> 78eb154bd8c4728a50739bcb65e474a31627bd34
           </label>
         </div>
         <div class="auth-form-grid">
           <label>Field
+<<<<<<< HEAD
             <input name="mentorRegisterField" formControlName="field" required placeholder="AI, Robotics, IoT">
           </label>
           <label>Access code
@@ -673,16 +796,37 @@
         </label>
         <label>Description
           <textarea name="mentorRegisterDescription" formControlName="description" rows="4" required placeholder="Briefly describe your expertise and mentorship focus."></textarea>
+=======
+            <input name="mentorRegisterField" [(ngModel)]="mentorRegistration.field" required placeholder="AI, Robotics, IoT">
+          </label>
+          <label>Access code
+            <input name="mentorRegisterCode" [(ngModel)]="mentorRegistration.access_code" required autocomplete="new-password" placeholder="Create access code">
+          </label>
+        </div>
+        <label>Research area
+          <input name="mentorRegisterResearch" [(ngModel)]="mentorRegistration.research_area" placeholder="Machine learning, smart systems">
+        </label>
+        <label>Description
+          <textarea name="mentorRegisterDescription" [(ngModel)]="mentorRegistration.description" rows="4" required placeholder="Briefly describe your expertise and mentorship focus."></textarea>
+>>>>>>> 78eb154bd8c4728a50739bcb65e474a31627bd34
         </label>
         <button class="button primary" type="submit">Submit for Approval</button>
         <p class="auth-switch">Already approved? <button type="button" (click)="openAuthModal('mentor-login')">Sign in</button></p>
       </form>
 
+<<<<<<< HEAD
       <form class="auth-modal-form" *ngIf="authModal === 'admin-login'" [formGroup]="adminLoginForm" (ngSubmit)="loginAdmin()">
         <p class="eyebrow">Admin Login</p>
         <h2>Admin dashboard</h2>
         <label>Password
           <input name="adminLoginPassword" formControlName="password" type="password" required autocomplete="current-password" placeholder="Admin password">
+=======
+      <form class="auth-modal-form" *ngIf="authModal === 'admin-login'" (ngSubmit)="loginAdmin()">
+        <p class="eyebrow">Admin Login</p>
+        <h2>Admin dashboard</h2>
+        <label>Password
+          <input name="adminLoginPassword" [(ngModel)]="adminPassword" type="password" required autocomplete="current-password" placeholder="Admin password">
+>>>>>>> 78eb154bd8c4728a50739bcb65e474a31627bd34
         </label>
         <button class="button primary" type="submit">Authenticate</button>
       </form>
@@ -722,8 +866,13 @@
         <span class="dot-flashing"></span> STEM Bot is thinking…
       </p>
     </div>
+<<<<<<< HEAD
     <form class="fab-chat-input" [formGroup]="chatForm" (ngSubmit)="askChatbot()">
       <input name="chatInput" formControlName="message" placeholder="Ask about mentors, projects, AI…" autocomplete="off">
+=======
+    <form class="fab-chat-input" (ngSubmit)="askChatbot()">
+      <input name="chatInput" [(ngModel)]="chatInput" placeholder="Ask about mentors, projects, AI…" autocomplete="off">
+>>>>>>> 78eb154bd8c4728a50739bcb65e474a31627bd34
       <button class="fab-send-btn" type="submit">➤</button>
     </form>
   </div>
