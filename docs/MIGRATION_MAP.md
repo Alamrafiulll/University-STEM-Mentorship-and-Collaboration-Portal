@@ -5,7 +5,7 @@ This document records the repository state inspected before the Angular 22 updat
 ## Repository boundary
 
 - Frontend: `src/`, `public/`, Angular workspace configuration, package files, and Vercel SPA configuration.
-- Backend: no server application, database configuration, schema, controllers, or remote API client exists in this repository.
+- Backend at migration time: none existed. A minimal Flask and SQLite authentication compatibility API was added later at the user's request.
 - Runtime data layer: `src/app/core/api/demo-backend.service.ts` is an injectable in-memory TypeScript demo service used by the UI. State resets on a full page reload.
 - Legacy frontend: none was present. The checked-in baseline was already an Angular 21 standalone application.
 
@@ -36,6 +36,6 @@ This document records the repository state inspected before the Angular 22 updat
 
 ## Compatibility notes
 
-- No backend compatibility changes were made because no backend is included.
-- `HttpClient` is provided at application bootstrap and `environment.apiBaseUrl` is the single integration point for a future real API.
+- Flask owns student, mentor, and admin login/registration endpoints; the existing catalog and workspace business behavior remains in `DemoBackend`.
+- `HttpClient` is provided at application bootstrap and `environment.apiBaseUrl` selects the local or production Flask API.
 - The large checked-in stylesheet and DOM structure remain in place to avoid visual changes during the framework upgrade.

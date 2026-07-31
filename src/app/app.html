@@ -381,7 +381,7 @@
             </label>
           </div>
           <div class="mentor-form-actions">
-            <button class="button primary" type="submit">Open Mentor Workspace</button>
+            <button class="button primary" type="submit" [disabled]="authBusy()">Open Mentor Workspace</button>
             <button class="button secondary" type="button" (click)="mentorAuthMode = 'register'">Register</button>
           </div>
         </form>
@@ -400,7 +400,7 @@
               <input name="regField" formControlName="field" required placeholder="AI, Robotics, IoT">
             </label>
             <label>Access code
-              <input name="regCode" formControlName="access_code" required autocomplete="new-password" placeholder="Create access code">
+              <input name="regCode" formControlName="access_code" type="password" required autocomplete="new-password" placeholder="Create access code">
             </label>
           </div>
           <label>Research area
@@ -410,7 +410,7 @@
             <textarea name="regDescription" formControlName="description" rows="4" required placeholder="Briefly describe your expertise and mentorship focus."></textarea>
           </label>
           <div class="mentor-form-actions">
-            <button class="button primary" type="submit">Submit for Approval</button>
+            <button class="button primary" type="submit" [disabled]="authBusy()">Submit for Approval</button>
             <button class="button secondary" type="button" (click)="mentorAuthMode = 'login'">Login</button>
           </div>
         </form>
@@ -616,7 +616,7 @@
         <label>Password
           <input name="studentLoginPassword" formControlName="password" type="password" required autocomplete="current-password" placeholder="Password">
         </label>
-        <button class="button primary" type="submit">Open Workspace</button>
+        <button class="button primary" type="submit" [disabled]="authBusy()">Open Workspace</button>
         <p class="auth-switch">New student? <button type="button" (click)="openAuthModal('student-register')">Create an account</button></p>
       </form>
 
@@ -632,7 +632,7 @@
         <label>Password
           <input name="studentRegisterPassword" formControlName="password" type="password" required autocomplete="new-password" placeholder="Create a password">
         </label>
-        <button class="button primary" type="submit">Create Student Account</button>
+        <button class="button primary" type="submit" [disabled]="authBusy()">Create Student Account</button>
         <p class="auth-switch">Already registered? <button type="button" (click)="openAuthModal('student-login')">Sign in</button></p>
       </form>
 
@@ -645,7 +645,7 @@
         <label>Access code
           <input name="mentorLoginCode" formControlName="access_code" type="password" required autocomplete="current-password" placeholder="Access code">
         </label>
-        <button class="button primary" type="submit">Open Mentor Workspace</button>
+        <button class="button primary" type="submit" [disabled]="authBusy()">Open Mentor Workspace</button>
         <p class="auth-switch">New mentor? <button type="button" (click)="openAuthModal('mentor-register')">Register profile</button></p>
       </form>
 
@@ -665,7 +665,7 @@
             <input name="mentorRegisterField" formControlName="field" required placeholder="AI, Robotics, IoT">
           </label>
           <label>Access code
-            <input name="mentorRegisterCode" formControlName="access_code" required autocomplete="new-password" placeholder="Create access code">
+            <input name="mentorRegisterCode" formControlName="access_code" type="password" required autocomplete="new-password" placeholder="Create access code">
           </label>
         </div>
         <label>Research area
@@ -674,17 +674,20 @@
         <label>Description
           <textarea name="mentorRegisterDescription" formControlName="description" rows="4" required placeholder="Briefly describe your expertise and mentorship focus."></textarea>
         </label>
-        <button class="button primary" type="submit">Submit for Approval</button>
+        <button class="button primary" type="submit" [disabled]="authBusy()">Submit for Approval</button>
         <p class="auth-switch">Already approved? <button type="button" (click)="openAuthModal('mentor-login')">Sign in</button></p>
       </form>
 
       <form class="auth-modal-form" *ngIf="authModal === 'admin-login'" [formGroup]="adminLoginForm" (ngSubmit)="loginAdmin()">
         <p class="eyebrow">Admin Login</p>
         <h2>Admin dashboard</h2>
+        <label>Admin ID
+          <input name="adminLoginIdentifier" formControlName="identifier" required autocomplete="username" placeholder="ADM001">
+        </label>
         <label>Password
           <input name="adminLoginPassword" formControlName="password" type="password" required autocomplete="current-password" placeholder="Admin password">
         </label>
-        <button class="button primary" type="submit">Authenticate</button>
+        <button class="button primary" type="submit" [disabled]="authBusy()">Authenticate</button>
       </form>
     </section>
   </div>

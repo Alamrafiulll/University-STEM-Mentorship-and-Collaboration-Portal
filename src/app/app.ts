@@ -1,8 +1,11 @@
 import { CommonModule } from '@angular/common';
+import { HttpErrorResponse } from '@angular/common/http';
 import { ChangeDetectorRef, Component, OnDestroy, OnInit, computed, inject, signal } from '@angular/core';
 import { NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { NavigationEnd, Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { DemoBackend } from './core/api/demo-backend.service';
+import { AuthenticationService } from './core/api/authentication.service';
+import { ApiError } from './core/models/authentication.model';
 
 type Status = 'idle' | 'loading' | 'ready' | 'error';
 
@@ -102,6 +105,7 @@ interface AdminData {
 })
 export class App implements OnInit, OnDestroy {
   private readonly demo = inject(DemoBackend);
+  private readonly authentication = inject(AuthenticationService);
   private readonly router = inject(Router);
   private readonly cdr = inject(ChangeDetectorRef);
   private readonly fb = inject(NonNullableFormBuilder);
@@ -111,6 +115,7 @@ export class App implements OnInit, OnDestroy {
   status = signal<Status>('idle');
   currentPage = signal('home');
   notice = signal('');
+  authBusy = signal(false);
   student = signal<StudentSession | null>(null);
   mentorSession = signal<MentorSession | null>(null);
   chatMessages = signal<ChatMessage[]>([
@@ -127,7 +132,7 @@ export class App implements OnInit, OnDestroy {
   readonly studentForm = this.fb.group({
     student_name: ['Rafi Demo Student', Validators.required],
     email: ['demo.student@mmu.edu.my', [Validators.required, Validators.email]],
-    password: ['demo', Validators.required]
+    password: ['student123', Validators.required]
   });
   readonly mentorRequestForm = this.fb.group({
     mentor_id: ['', Validators.required],
@@ -147,7 +152,7 @@ export class App implements OnInit, OnDestroy {
   });
   readonly mentorLoginForm = this.fb.group({
     email: ['aisha.rahman@mmu.edu.my', [Validators.required, Validators.email]],
-    access_code: ['demo-mentor', Validators.required]
+    access_code: ['mentor123', Validators.required]
   });
   readonly mentorRegistrationForm = this.fb.group({
     name: ['', Validators.required],
@@ -167,7 +172,8 @@ export class App implements OnInit, OnDestroy {
   });
   readonly chatForm = this.fb.group({ message: [''] });
   readonly adminLoginForm = this.fb.group({
-    password: ['demo-admin', Validators.required]
+    identifier: ['ADM001', Validators.required],
+    password: ['admin123', Validators.required]
   });
   portalTab: 'mentors' | 'projects' | 'workspace' = 'mentors';
   adminTab: 'students' | 'pending' | 'approved' | 'rejected' = 'pending';
@@ -295,10 +301,15 @@ export class App implements OnInit, OnDestroy {
 
     this.mentors.set(catalog.mentors);
     this.projects.set(catalog.projects);
-    this.student.set(this.demo.studentSession());
-    this.mentorSession.set(this.demo.mentorSession());
-    this.adminLoggedIn.set(true);
-    this.adminData.set(this.demo.adminData());
+    if (this.student()) {
+      this.student.set(this.demo.studentSession());
+    }
+    if (this.mentorSession()) {
+      this.mentorSession.set(this.demo.mentorSession());
+    }
+    if (this.adminLoggedIn()) {
+      this.adminData.set(this.demo.adminData());
+    }
     this.status.set('ready');
 
     if (message) {
@@ -312,19 +323,42 @@ export class App implements OnInit, OnDestroy {
   }
 
   loginStudent(): void {
-    if (this.studentForm.invalid) return;
-    this.demo.loginStudent(this.studentForm.getRawValue());
-    this.closeAuthModal();
-    this.portalTab = 'workspace';
-    this.syncDemoSession('Demo student workspace is ready.');
+    if (this.studentForm.invalid || this.authBusy()) return;
+    const form = this.studentForm.getRawValue();
+    this.authBusy.set(true);
+    this.authentication.login('student', {
+      identifier: form.email,
+      password: form.password
+    }).subscribe({
+      next: (response) => {
+        this.student.set(this.demo.loginStudent(form));
+        this.closeAuthModal();
+        this.portalTab = 'workspace';
+        this.syncDemoSession(`${response.message} Demo student workspace is ready.`);
+        this.authBusy.set(false);
+      },
+      error: (error: HttpErrorResponse) => this.handleAuthError(error)
+    });
   }
 
   registerStudent(): void {
-    if (this.studentForm.invalid) return;
-    this.demo.registerStudent(this.studentForm.getRawValue());
-    this.closeAuthModal();
-    this.portalTab = 'workspace';
-    this.syncDemoSession('Demo student account is active.');
+    if (this.studentForm.invalid || this.authBusy()) return;
+    const form = this.studentForm.getRawValue();
+    this.authBusy.set(true);
+    this.authentication.registerStudent({
+      name: form.student_name,
+      email: form.email,
+      password: form.password
+    }).subscribe({
+      next: (response) => {
+        this.student.set(this.demo.registerStudent(form));
+        this.closeAuthModal();
+        this.portalTab = 'workspace';
+        this.syncDemoSession(`${response.message} Your actor ID is ${response.user.actorId}.`);
+        this.authBusy.set(false);
+      },
+      error: (error: HttpErrorResponse) => this.handleAuthError(error)
+    });
   }
 
   refreshStudentSession(showErrors = true): void {
@@ -358,20 +392,43 @@ export class App implements OnInit, OnDestroy {
   }
 
   registerMentor(): void {
-    if (this.mentorRegistrationForm.invalid) return;
-    const message = this.demo.registerMentor(this.mentorRegistrationForm.getRawValue());
-    this.mentorRegistrationForm.reset({ name: '', field: '', description: '', research_area: '', email: '', access_code: '', workshop_title: '', workshop_description: '' });
-    this.closeAuthModal();
-    this.mentorAuthMode = 'login';
-    this.adminTab = 'pending';
-    this.syncDemoSession(message);
+    if (this.mentorRegistrationForm.invalid || this.authBusy()) return;
+    const form = this.mentorRegistrationForm.getRawValue();
+    this.authBusy.set(true);
+    this.authentication.registerMentor({
+      name: form.name,
+      email: form.email,
+      password: form.access_code
+    }).subscribe({
+      next: (response) => {
+        const message = this.demo.registerMentor(form);
+        this.mentorRegistrationForm.reset({ name: '', field: '', description: '', research_area: '', email: '', access_code: '', workshop_title: '', workshop_description: '' });
+        this.closeAuthModal();
+        this.mentorAuthMode = 'login';
+        this.adminTab = 'pending';
+        this.syncDemoSession(`${message} Your actor ID is ${response.user.actorId}.`);
+        this.authBusy.set(false);
+      },
+      error: (error: HttpErrorResponse) => this.handleAuthError(error)
+    });
   }
 
   loginMentor(): void {
-    if (this.mentorLoginForm.invalid) return;
-    this.demo.loginMentor();
-    this.closeAuthModal();
-    this.syncDemoSession('Demo mentor workspace is ready.');
+    if (this.mentorLoginForm.invalid || this.authBusy()) return;
+    const form = this.mentorLoginForm.getRawValue();
+    this.authBusy.set(true);
+    this.authentication.login('mentor', {
+      identifier: form.email,
+      password: form.access_code
+    }).subscribe({
+      next: (response) => {
+        this.mentorSession.set(this.demo.loginMentor());
+        this.closeAuthModal();
+        this.syncDemoSession(`${response.message} Demo mentor workspace is ready.`);
+        this.authBusy.set(false);
+      },
+      error: (error: HttpErrorResponse) => this.handleAuthError(error)
+    });
   }
 
   refreshMentorSession(showErrors = true): void {
@@ -434,11 +491,24 @@ export class App implements OnInit, OnDestroy {
   }
 
   loginAdmin(): void {
-    if (this.adminLoginForm.invalid) return;
-    this.adminLoggedIn.set(true);
-    this.adminLoginForm.controls.password.setValue('');
-    this.closeAuthModal();
-    this.syncDemoSession('Demo admin dashboard is ready.');
+    if (this.adminLoginForm.invalid || this.authBusy()) return;
+    const form = this.adminLoginForm.getRawValue();
+    this.authBusy.set(true);
+    this.authentication.login('admin', form).subscribe({
+      next: (response) => {
+        this.adminLoggedIn.set(true);
+        this.closeAuthModal();
+        this.syncDemoSession(`${response.message} Demo admin dashboard is ready.`);
+        this.authBusy.set(false);
+      },
+      error: (error: HttpErrorResponse) => this.handleAuthError(error)
+    });
+  }
+
+  private handleAuthError(error: HttpErrorResponse): void {
+    const apiError = error.error as ApiError | null;
+    this.notice.set(apiError?.message || 'Authentication service is unavailable. Start the Flask backend and try again.');
+    this.authBusy.set(false);
   }
 
   refreshAdminData(): void {
@@ -463,8 +533,9 @@ export class App implements OnInit, OnDestroy {
   }
 
   logoutAdmin(): void {
-    this.adminLoggedIn.set(true);
-    this.syncDemoSession('Login is disabled for this demo, so admin access stays open.');
+    this.adminLoggedIn.set(false);
+    this.adminData.set(null);
+    this.notice.set('Admin signed out.');
   }
 
   // --- Draggable chat window and launcher ---

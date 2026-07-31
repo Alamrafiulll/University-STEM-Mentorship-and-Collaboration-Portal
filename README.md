@@ -2,7 +2,7 @@
 
 An Angular web portal for Multimedia University students, mentors, and administrators to explore STEM mentors, collaborate on projects, manage requests, and use the built-in STEM Bot.
 
-The repository currently contains a self-contained portfolio demo. It does **not** contain a server backend or database. The injectable `DemoBackend` service keeps sample data in memory, so changes reset whenever the browser performs a full reload.
+The repository contains an Angular frontend and a Flask authentication API backed by SQLite. The injectable `DemoBackend` service still supplies the existing mentor, project, request, and chatbot portfolio data; those catalog/workspace changes reset on a full reload.
 
 ## How the application works
 
@@ -11,7 +11,7 @@ The repository currently contains a self-contained portfolio demo. It does **not
 - **Mentor Portal** provides the existing mentor sign-in/registration forms, request decisions, and project creation.
 - **Admin Portal** exposes the demo student and mentor approval lists.
 - **STEM Bot** answers questions using the local demo response logic and can be moved around the viewport.
-- Demo student, mentor, and admin sessions are preloaded so every workflow can be reviewed without external credentials.
+- Student, mentor, and admin authentication is verified by Flask against hashed passwords stored in SQLite.
 
 No branding, visible copy, page layout, styling, asset, or user journey was intentionally redesigned during the Angular 22 update.
 
@@ -24,6 +24,8 @@ No branding, visible copy, page layout, styling, asset, or user journey was inte
 - HTML5
 - Plain CSS3
 - RxJS 7.8
+- Flask 3.1
+- SQLite
 - Vitest with Happy DOM
 - Node.js 22
 - npm 10
@@ -32,7 +34,7 @@ No Angular Material, Bootstrap, Tailwind CSS, or other UI framework is used.
 
 ## Frontend architecture
 
-The application boots from `src/main.ts` with the providers in `src/app/app.config.ts`. Angular Router owns the public URLs in `src/app/app.routes.ts`. The preserved UI shell is in separate TypeScript, HTML, and CSS files. `DemoBackend` contains the existing in-memory business behavior.
+The application boots from `src/main.ts` with the providers in `src/app/app.config.ts`. Angular Router owns the public URLs in `src/app/app.routes.ts`. Typed `AuthenticationService` requests are sent through Angular HttpClient to Flask. Passwords are hashed before SQLite storage. `DemoBackend` retains the existing non-authentication demo behavior.
 
 The detailed pre-migration inventory, route mapping, data dependencies, and preserved workflows are in [docs/MIGRATION_MAP.md](docs/MIGRATION_MAP.md).
 
@@ -55,6 +57,12 @@ src/
 ├── index.html
 ├── main.ts
 └── styles.css
+backend/
+├── app.py
+├── requirements.txt
+└── test_app.py
+api/
+└── index.py
 ```
 
 ## Prerequisites
@@ -63,6 +71,7 @@ Install:
 
 - Node.js 22.22.3 or newer, or Node.js 24.15.0 or newer
 - npm 10.x
+- Python 3.10 or newer
 
 Confirm the installed versions:
 
@@ -80,6 +89,22 @@ npm install
 ```
 
 ## Run for development
+
+Install the Flask dependencies once:
+
+```powershell
+npm run backend:install
+```
+
+Start Flask in the first terminal:
+
+```powershell
+npm run backend:start
+```
+
+The API runs at `http://127.0.0.1:5000/api`.
+
+Open a second terminal in the same project directory and start Angular:
 
 ```powershell
 npm start
@@ -117,18 +142,32 @@ Run in watch mode:
 npm test
 ```
 
-The focused tests cover demo business rules and the public route map.
+Run the Flask authentication tests:
+
+```powershell
+npm run backend:test
+```
+
+The tests cover authentication requests, form validation, SQLite login/registration, demo business rules, and the public route map.
+
+## Demo login credentials
+
+| Actor | Login ID | Email | Password/access code |
+| --- | --- | --- | --- |
+| Student | `STU001` | `demo.student@mmu.edu.my` | `student123` |
+| Mentor | `MEN001` | `aisha.rahman@mmu.edu.my` | `mentor123` |
+| Admin | `ADM001` | `admin@mmu.edu.my` | `admin123` |
+
+The student and mentor forms accept the displayed email and password/access code. The admin form accepts `ADM001` and `admin123`. New students and mentors can use the existing registration forms; the API assigns an actor ID after registration.
 
 ## Backend connection and environment configuration
 
-There is no real backend in this repository. The current UI uses `src/app/core/api/demo-backend.service.ts` and does not send HTTP requests.
-
-Angular `HttpClient` is registered in `app.config.ts` so a real backend can be connected without changing application bootstrap. Configure its base URL in:
+Angular `HttpClient` is registered in `app.config.ts`. The API base URL is configured in:
 
 - `src/environments/environment.ts` for development
 - `src/environments/environment.production.ts` for production
 
-Both currently use an empty `apiBaseUrl` because inventing an endpoint would misrepresent the application. When an actual backend is supplied, replace `DemoBackend` with typed Angular services that use this setting and retain the existing payloads and response behavior.
+Development uses `http://127.0.0.1:5000/api`. Production uses the same-origin `/api` Vercel Python function. Local SQLite data is created automatically at `backend/instance/portal.db`; the database file is ignored by Git.
 
 ## Application routes
 
@@ -164,7 +203,7 @@ For Vercel, import this directory as the project root. `vercel.json` runs the pr
 
 ## Current limitations
 
-- Data is in memory and is not persisted.
-- Authentication is intentionally disabled in the demo behavior already present in the repository.
-- No server API, database, or backend tests can be documented or verified because those files are not included.
+- Authentication accounts persist locally in SQLite.
+- Mentor/project/request catalog mutations remain in-memory demo data and reset on reload.
+- SQLite storage in a serverless Vercel function is temporary; use a managed persistent database for production accounts.
 - The checked-in application began as a single large preserved UI shell; further feature-component extraction should be paired with visual regression tooling to avoid changing the legacy stylesheet’s selector behavior.

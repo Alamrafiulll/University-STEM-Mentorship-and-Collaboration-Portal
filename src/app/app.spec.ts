@@ -1,4 +1,5 @@
 import { TestBed } from '@angular/core/testing';
+import { provideHttpClient } from '@angular/common/http';
 import { provideRouter } from '@angular/router';
 import { describe, expect, it } from 'vitest';
 import { App } from './app';
@@ -8,7 +9,7 @@ describe('App reactive forms', () => {
   it('enforces the preserved required student credentials', async () => {
     await TestBed.configureTestingModule({
       imports: [App],
-      providers: [provideRouter(routes)]
+      providers: [provideHttpClient(), provideRouter(routes)]
     }).compileComponents();
 
     const component = TestBed.createComponent(App).componentInstance;
@@ -21,7 +22,7 @@ describe('App reactive forms', () => {
   it('validates email format and mentor project team-size limits', async () => {
     await TestBed.configureTestingModule({
       imports: [App],
-      providers: [provideRouter(routes)]
+      providers: [provideHttpClient(), provideRouter(routes)]
     }).compileComponents();
 
     const component = TestBed.createComponent(App).componentInstance;
